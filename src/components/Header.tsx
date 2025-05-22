@@ -1,8 +1,29 @@
 import { Link } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const aboutRef = useRef<HTMLAnchorElement>(null)
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      e.preventDefault()
+      const aboutSection = document.querySelector('#about')
+      aboutSection?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setIsMenuOpen(false)
+    }
+
+    const currentRef = aboutRef.current
+    if (currentRef) {
+      currentRef.addEventListener('click', handleClick)
+    }
+
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('click', handleClick)
+      }
+    }
+  }, [])
+
   return (
     <header className="fixed top-0 w-full bg-white border-b border-gray-200 z-50">
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -17,24 +38,30 @@ export default function Header() {
 
         <ul className="hidden md:flex items-center gap-8">
           <li>
-            <Link
-              to="#services"
+            <a
+              ref={aboutRef}
+              href="#about"
               className="text-gray-900 hover:text-primary-600 font-bold transition-colors duration-200"
             >
               A propos
-            </Link>
+            </a>
           </li>
           <li>
             <Link
-              to="#tarifs"
+              to="/students"
               className="text-gray-900 hover:text-primary-600 font-bold transition-colors duration-200"
+              activeProps={{
+                style: {
+                  color: 'oklch(45.9% 0.187 3.815)',
+                },
+              }}
             >
               Etudiants
             </Link>
           </li>
           <li>
             <Link
-              to="#mission"
+              to="/"
               className="text-gray-900 hover:text-primary-600 font-bold transition-colors duration-200"
             >
               Services
@@ -51,14 +78,14 @@ export default function Header() {
         </ul>
         <div className="flex items-center gap-4">
           <Link
-            to="About.html"
+            to="/"
             className="hidden md:block px-4 py-2 text-gray-900 border border-primary-950 rounded-lg hover:bg-gray-50 font-medium transition-all duration-200"
           >
             Se connecter
           </Link>
           <Link
-            to="Blog.html"
-            className="px-4 py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg"
+            to="/"
+            className="px-4 hidden md:block py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg"
           >
             S'inscrire
           </Link>
@@ -89,20 +116,21 @@ export default function Header() {
       {isMenuOpen && (
         <div id="mobile-menu" className="border-t border-gray-200 bg-white">
           <div className="px-6 py-4 space-y-4">
-            <Link
-              to="#services"
+            <a
+              ref={aboutRef}
+              href="#about"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               A propos
-            </Link>
+            </a>
             <Link
-              to="#tarifs"
+              to="/"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               Etudiants
             </Link>
             <Link
-              to="#mission"
+              to="/"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               Services
@@ -114,13 +142,13 @@ export default function Header() {
               Contact
             </Link> */}
             <Link
-              to="About.html"
+              to="/"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               Se connecter
             </Link>
             <Link
-              to="Blog.html"
+              to="/"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               S'inscrire

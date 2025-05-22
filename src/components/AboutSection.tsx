@@ -24,7 +24,10 @@ export default function AboutSection() {
   }
 
   return (
-    <div className="bg-[url('src/assets/bubbles.svg')] bg-cover min-h-screen py-16 lg:py-0">
+    <section
+      className="bg-[url('src/assets/bubbles.svg')] py-16 bg-cover min-h-screen  lg:py-0"
+      id="about"
+    >
       <div className="container mx-auto px-6 py-16">
         <h1 className="text-gray-900 text-5xl text-center font-extrabold mb-12">
           <span className="text-primary-800">P</span>ar où commencer ?
@@ -53,6 +56,6 @@ export default function AboutSection() {
           </a>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

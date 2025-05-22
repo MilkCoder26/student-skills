@@ -12,12 +12,40 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
+import { Route as StudentsIndexImport } from './routes/students/index'
+import { Route as ServicesIndexImport } from './routes/services/index'
+import { Route as StudentsStudentIdImport } from './routes/students/$studentId'
+import { Route as ServicesServiceIdImport } from './routes/services/$serviceId'
 
 // Create/Update Routes
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const StudentsIndexRoute = StudentsIndexImport.update({
+  id: '/students/',
+  path: '/students/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ServicesIndexRoute = ServicesIndexImport.update({
+  id: '/services/',
+  path: '/services/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const StudentsStudentIdRoute = StudentsStudentIdImport.update({
+  id: '/students/$studentId',
+  path: '/students/$studentId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ServicesServiceIdRoute = ServicesServiceIdImport.update({
+  id: '/services/$serviceId',
+  path: '/services/$serviceId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -32,6 +60,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/services/$serviceId': {
+      id: '/services/$serviceId'
+      path: '/services/$serviceId'
+      fullPath: '/services/$serviceId'
+      preLoaderRoute: typeof ServicesServiceIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/students/$studentId': {
+      id: '/students/$studentId'
+      path: '/students/$studentId'
+      fullPath: '/students/$studentId'
+      preLoaderRoute: typeof StudentsStudentIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/services/': {
+      id: '/services/'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof ServicesIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/students/': {
+      id: '/students/'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof StudentsIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -39,32 +95,68 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/students/$studentId': typeof StudentsStudentIdRoute
+  '/services': typeof ServicesIndexRoute
+  '/students': typeof StudentsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/students/$studentId': typeof StudentsStudentIdRoute
+  '/services': typeof ServicesIndexRoute
+  '/students': typeof StudentsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/students/$studentId': typeof StudentsStudentIdRoute
+  '/services/': typeof ServicesIndexRoute
+  '/students/': typeof StudentsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/services/$serviceId'
+    | '/students/$studentId'
+    | '/services'
+    | '/students'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/services/$serviceId'
+    | '/students/$studentId'
+    | '/services'
+    | '/students'
+  id:
+    | '__root__'
+    | '/'
+    | '/services/$serviceId'
+    | '/students/$studentId'
+    | '/services/'
+    | '/students/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ServicesServiceIdRoute: typeof ServicesServiceIdRoute
+  StudentsStudentIdRoute: typeof StudentsStudentIdRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
+  StudentsIndexRoute: typeof StudentsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ServicesServiceIdRoute: ServicesServiceIdRoute,
+  StudentsStudentIdRoute: StudentsStudentIdRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
+  StudentsIndexRoute: StudentsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +169,27 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/services/$serviceId",
+        "/students/$studentId",
+        "/services/",
+        "/students/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/services/$serviceId": {
+      "filePath": "services/$serviceId.tsx"
+    },
+    "/students/$studentId": {
+      "filePath": "students/$studentId.tsx"
+    },
+    "/services/": {
+      "filePath": "services/index.tsx"
+    },
+    "/students/": {
+      "filePath": "students/index.tsx"
     }
   }
 }

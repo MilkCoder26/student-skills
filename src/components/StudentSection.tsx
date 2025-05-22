@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import type { Student } from './StudentCard'
 import StudentCard from './StudentCard'
 
@@ -52,11 +53,13 @@ export default function StudentSection() {
           ))}
         </div>
 
-        {/* Call to action */}
-        <div className="text-center mt-12">
-          <button className="bg-gradient-to-r from-primary-800 to-primary-600 text-white font-bold py-3 px-8 rounded-full hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+        <div className="pt-4 mt-12 animate-fade-in-up-delay-2 text-center">
+          <Link
+            to="/students"
+            className="inline-block bg-linear-to-r from-primary-800 to-primary-600 text-white text-bred-900 px-6 py-4 rounded-full font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
             Voir tous les étudiants
-          </button>
+          </Link>
         </div>
       </div>
     </section>
