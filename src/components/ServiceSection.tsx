@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import type { Service } from './ServiceCard'
 import ServiceCard from './ServiceCard'
 
@@ -10,6 +11,8 @@ export default function ServiceSection() {
         'Création de sites web modernes et responsives avec les dernières technologies',
       price: '499',
       studentName: 'Tenena SEKONGO',
+      category: 'web',
+      priceRange: '2000-5000',
     },
     {
       id: 2,
@@ -18,6 +21,8 @@ export default function ServiceSection() {
         "Développement d'applications mobiles natives pour iOS et Android",
       price: '899',
       studentName: 'Marie DUBOIS',
+      category: 'web',
+      priceRange: '2000-5000',
     },
     {
       id: 3,
@@ -26,6 +31,8 @@ export default function ServiceSection() {
         "Création d'identités visuelles et supports de communication",
       price: '299',
       studentName: 'Ahmed HASSAN',
+      category: 'web',
+      priceRange: '2000-5000',
     },
   ]
 
@@ -52,12 +59,12 @@ export default function ServiceSection() {
         </div>
 
         <div className="pt-4 mt-12 animate-fade-in-up-delay-2 text-center">
-          <a
-            href="#services"
+          <Link
+            to="/services"
             className="inline-block bg-linear-to-r from-primary-800 to-primary-600 text-white text-bred-900 px-6 py-4 rounded-full font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
           >
             Voir tous les services
-          </a>
+          </Link>
         </div>
       </div>
     </section>

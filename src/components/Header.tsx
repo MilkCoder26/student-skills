@@ -61,8 +61,13 @@ export default function Header() {
           </li>
           <li>
             <Link
-              to="/"
+              to="/services"
               className="text-gray-900 hover:text-primary-600 font-bold transition-colors duration-200"
+              activeProps={{
+                style: {
+                  color: 'oklch(45.9% 0.187 3.815)',
+                },
+              }}
             >
               Services
             </Link>
@@ -78,13 +83,13 @@ export default function Header() {
         </ul>
         <div className="flex items-center gap-4">
           <Link
-            to="/"
+            to="/signin"
             className="hidden md:block px-4 py-2 text-gray-900 border border-primary-950 rounded-lg hover:bg-gray-50 font-medium transition-all duration-200"
           >
             Se connecter
           </Link>
           <Link
-            to="/"
+            to="/signup"
             className="px-4 hidden md:block py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 font-medium transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg"
           >
             S'inscrire
@@ -124,13 +129,13 @@ export default function Header() {
               A propos
             </a>
             <Link
-              to="/"
+              to="/students"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               Etudiants
             </Link>
             <Link
-              to="/"
+              to="/services"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               Services
@@ -142,13 +147,13 @@ export default function Header() {
               Contact
             </Link> */}
             <Link
-              to="/"
+              to="/signin"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               Se connecter
             </Link>
             <Link
-              to="/"
+              to="/signup"
               className="block text-gray-900 hover:text-primary-600 font-medium"
             >
               S'inscrire

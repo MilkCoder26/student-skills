@@ -1,4 +1,5 @@
 import AboutSection from '@/components/AboutSection'
+// import ContactSection from '@/components/ContactSection'
 import HomeSection from '@/components/HomeSection'
 import ServiceSection from '@/components/ServiceSection'
 import StudentSection from '@/components/StudentSection'
@@ -15,6 +16,7 @@ function App() {
       <AboutSection />
       <StudentSection />
       <ServiceSection />
+      {/* <ContactSection /> */}
     </div>
   )
 }

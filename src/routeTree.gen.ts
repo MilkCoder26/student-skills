@@ -11,6 +11,8 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SignupImport } from './routes/signup'
+import { Route as SigninImport } from './routes/signin'
 import { Route as IndexImport } from './routes/index'
 import { Route as StudentsIndexImport } from './routes/students/index'
 import { Route as ServicesIndexImport } from './routes/services/index'
@@ -18,6 +20,18 @@ import { Route as StudentsStudentIdImport } from './routes/students/$studentId'
 import { Route as ServicesServiceIdImport } from './routes/services/$serviceId'
 
 // Create/Update Routes
+
+const SignupRoute = SignupImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SigninRoute = SigninImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -60,6 +74,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/signin': {
+      id: '/signin'
+      path: '/signin'
+      fullPath: '/signin'
+      preLoaderRoute: typeof SigninImport
+      parentRoute: typeof rootRoute
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupImport
+      parentRoute: typeof rootRoute
+    }
     '/services/$serviceId': {
       id: '/services/$serviceId'
       path: '/services/$serviceId'
@@ -95,6 +123,8 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
   '/students/$studentId': typeof StudentsStudentIdRoute
   '/services': typeof ServicesIndexRoute
@@ -103,6 +133,8 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
   '/students/$studentId': typeof StudentsStudentIdRoute
   '/services': typeof ServicesIndexRoute
@@ -112,6 +144,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/signin': typeof SigninRoute
+  '/signup': typeof SignupRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
   '/students/$studentId': typeof StudentsStudentIdRoute
   '/services/': typeof ServicesIndexRoute
@@ -122,6 +156,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/signin'
+    | '/signup'
     | '/services/$serviceId'
     | '/students/$studentId'
     | '/services'
@@ -129,6 +165,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/signin'
+    | '/signup'
     | '/services/$serviceId'
     | '/students/$studentId'
     | '/services'
@@ -136,6 +174,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/signin'
+    | '/signup'
     | '/services/$serviceId'
     | '/students/$studentId'
     | '/services/'
@@ -145,6 +185,8 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SigninRoute: typeof SigninRoute
+  SignupRoute: typeof SignupRoute
   ServicesServiceIdRoute: typeof ServicesServiceIdRoute
   StudentsStudentIdRoute: typeof StudentsStudentIdRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -153,6 +195,8 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SigninRoute: SigninRoute,
+  SignupRoute: SignupRoute,
   ServicesServiceIdRoute: ServicesServiceIdRoute,
   StudentsStudentIdRoute: StudentsStudentIdRoute,
   ServicesIndexRoute: ServicesIndexRoute,
@@ -170,6 +214,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/signin",
+        "/signup",
         "/services/$serviceId",
         "/students/$studentId",
         "/services/",
@@ -178,6 +224,12 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/signin": {
+      "filePath": "signin.tsx"
+    },
+    "/signup": {
+      "filePath": "signup.tsx"
     },
     "/services/$serviceId": {
       "filePath": "services/$serviceId.tsx"

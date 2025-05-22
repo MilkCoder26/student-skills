@@ -1,4 +1,4 @@
-import ServiceImage from '../assets/service.png'
+import { MdOutlineMiscellaneousServices } from 'react-icons/md'
 
 export type Service = {
   id: number
@@ -6,18 +6,16 @@ export type Service = {
   description: string
   price: string
   studentName: string
+  category: string
+  priceRange: string
 }
 
 const ServiceCard = ({ service }: { service: Service }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 transform hover:-translate-y-1 border border-gray-100">
       {/* Service image */}
-      <div className="mb-3">
-        <img
-          src={ServiceImage}
-          alt={service.title}
-          className="w-full h-40 object-cover rounded-lg"
-        />
+      <div className="mb-3 text-center">
+        <MdOutlineMiscellaneousServices />
       </div>
 
       {/* Service info */}

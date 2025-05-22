@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import MenImage from '../assets/men-profile.png'
 import WomenImage from '../assets/women-profile.png'
 
@@ -68,10 +69,13 @@ const StudentCard = ({ student }: { student: Student }) => {
           </div>
         </div>
 
-        {/* Action button - Plus petit */}
-        <button className="w-full bg-primary-600 text-white font-medium py-2 px-3 rounded-lg hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg text-sm">
+        <Link
+          to="/students/$studentId"
+          params={{ studentId: student.id.toString() }}
+          className="w-full inline-block text-center bg-primary-600 text-white font-medium py-2 px-3 rounded-lg hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg text-sm"
+        >
           Voir le profil
-        </button>
+        </Link>
       </div>
     </div>
   )
