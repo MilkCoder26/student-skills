@@ -15,7 +15,6 @@ function RouteComponent() {
       niveau: 4,
       competence: 'Développement site web',
       sexe: 'male',
-      bgColor: 'bg-pink-200',
       skills: ['React', 'JavaScript', 'CSS'],
     },
     {
@@ -25,7 +24,6 @@ function RouteComponent() {
       niveau: 3,
       competence: 'Cybersécurité et réseaux',
       sexe: 'female',
-      bgColor: 'bg-blue-200',
       skills: ['Sécurité', 'Réseaux', 'Linux'],
     },
     {
@@ -35,7 +33,6 @@ function RouteComponent() {
       niveau: 5,
       competence: 'Applications mobiles',
       sexe: 'male',
-      bgColor: 'bg-green-200',
       skills: ['Flutter', 'Dart', 'Firebase'],
     },
     {
@@ -45,7 +42,6 @@ function RouteComponent() {
       niveau: 2,
       competence: 'Design UX/UI',
       sexe: 'female',
-      bgColor: 'bg-purple-200',
       skills: ['Figma', 'Adobe XD', 'Photoshop'],
     },
     {
@@ -55,7 +51,6 @@ function RouteComponent() {
       niveau: 1,
       competence: 'Administration système',
       sexe: 'male',
-      bgColor: 'bg-yellow-200',
       skills: ['Windows Server', 'Active Directory', 'PowerShell'],
     },
     {
@@ -65,7 +60,6 @@ function RouteComponent() {
       niveau: 4,
       competence: 'Gestion de projet',
       sexe: 'female',
-      bgColor: 'bg-indigo-200',
       skills: ['Scrum', 'Agile', 'MS Project'],
     },
   ]

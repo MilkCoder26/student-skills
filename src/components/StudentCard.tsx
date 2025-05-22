@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import MenImage from '../assets/men-profile.png'
 import WomenImage from '../assets/women-profile.png'
+import type { Service } from './ServiceCard'
 
 export type Student = {
   id: number
@@ -9,8 +10,11 @@ export type Student = {
   niveau: number
   competence: string
   sexe: string
-  bgColor: string
   skills: string[]
+  email?: string
+  phone?: string
+  services?: Service[]
+  bio?: string
 }
 
 const StudentCard = ({ student }: { student: Student }) => {

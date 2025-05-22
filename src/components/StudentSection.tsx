@@ -11,7 +11,6 @@ export default function StudentSection() {
       niveau: 4,
       competence: 'Développement site web',
       sexe: 'male',
-      bgColor: 'bg-pink-200',
       skills: ['React', 'JavaScript', 'CSS'],
     },
     {
@@ -21,7 +20,6 @@ export default function StudentSection() {
       niveau: 3,
       competence: 'Cybersécurité et réseaux',
       sexe: 'female',
-      bgColor: 'bg-blue-200',
       skills: ['Sécurité', 'Réseaux', 'Linux'],
     },
     {
@@ -31,7 +29,6 @@ export default function StudentSection() {
       niveau: 5,
       competence: 'Applications mobiles',
       sexe: 'male',
-      bgColor: 'bg-green-200',
       skills: ['Flutter', 'Dart', 'Firebase'],
     },
   ]
