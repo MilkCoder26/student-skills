@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { MdOutlineMiscellaneousServices } from 'react-icons/md'
 
 export type Service = {
@@ -12,7 +13,11 @@ export type Service = {
 
 const ServiceCard = ({ service }: { service: Service }) => {
   return (
-    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 transform hover:-translate-y-1 border border-gray-100">
+    <Link
+      to="/services/$serviceId"
+      params={{ serviceId: service.id.toString() }}
+      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 transform hover:-translate-y-1 border border-gray-100"
+    >
       {/* Service image */}
       <div className="mb-3 text-center">
         <MdOutlineMiscellaneousServices />
@@ -31,7 +36,7 @@ const ServiceCard = ({ service }: { service: Service }) => {
         {/* Student name */}
         <div className="mb-3">
           <p className="text-xs text-gray-500">Proposé par</p>
-          <p className="text-sm font-light text-primary-600">
+          <p className="text-md font-medium text-primary-600">
             {service.studentName}
           </p>
         </div>
@@ -49,7 +54,7 @@ const ServiceCard = ({ service }: { service: Service }) => {
           Choisir ce service
         </button>
       </div>
-    </div>
+    </Link>
   )
 }
 
