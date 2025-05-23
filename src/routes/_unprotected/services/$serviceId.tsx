@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/services/$serviceId')({
+export const Route = createFileRoute('/_unprotected/services/$serviceId')({
   component: RouteComponent,
 })
 

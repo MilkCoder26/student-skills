@@ -11,196 +11,280 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SignupImport } from './routes/signup'
-import { Route as SigninImport } from './routes/signin'
-import { Route as IndexImport } from './routes/index'
-import { Route as StudentsIndexImport } from './routes/students/index'
-import { Route as ServicesIndexImport } from './routes/services/index'
-import { Route as StudentsStudentIdImport } from './routes/students/$studentId'
-import { Route as ServicesServiceIdImport } from './routes/services/$serviceId'
+import { Route as UnprotectedRouteImport } from './routes/_unprotected/route'
+import { Route as UnprotectedIndexImport } from './routes/_unprotected/index'
+import { Route as UnprotectedSignupImport } from './routes/_unprotected/signup'
+import { Route as UnprotectedSigninImport } from './routes/_unprotected/signin'
+import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard/route'
+import { Route as UnprotectedStudentsIndexImport } from './routes/_unprotected/students/index'
+import { Route as UnprotectedServicesIndexImport } from './routes/_unprotected/services/index'
+import { Route as ProtectedDashboardIndexImport } from './routes/_protected/dashboard/index'
+import { Route as UnprotectedStudentsStudentIdImport } from './routes/_unprotected/students/$studentId'
+import { Route as UnprotectedServicesServiceIdImport } from './routes/_unprotected/services/$serviceId'
 
 // Create/Update Routes
 
-const SignupRoute = SignupImport.update({
-  id: '/signup',
-  path: '/signup',
+const UnprotectedRouteRoute = UnprotectedRouteImport.update({
+  id: '/_unprotected',
   getParentRoute: () => rootRoute,
 } as any)
 
-const SigninRoute = SigninImport.update({
-  id: '/signin',
-  path: '/signin',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const IndexRoute = IndexImport.update({
+const UnprotectedIndexRoute = UnprotectedIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => UnprotectedRouteRoute,
+} as any)
+
+const UnprotectedSignupRoute = UnprotectedSignupImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => UnprotectedRouteRoute,
+} as any)
+
+const UnprotectedSigninRoute = UnprotectedSigninImport.update({
+  id: '/signin',
+  path: '/signin',
+  getParentRoute: () => UnprotectedRouteRoute,
+} as any)
+
+const ProtectedDashboardRouteRoute = ProtectedDashboardRouteImport.update({
+  id: '/_protected/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
-const StudentsIndexRoute = StudentsIndexImport.update({
+const UnprotectedStudentsIndexRoute = UnprotectedStudentsIndexImport.update({
   id: '/students/',
   path: '/students/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => UnprotectedRouteRoute,
 } as any)
 
-const ServicesIndexRoute = ServicesIndexImport.update({
+const UnprotectedServicesIndexRoute = UnprotectedServicesIndexImport.update({
   id: '/services/',
   path: '/services/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => UnprotectedRouteRoute,
 } as any)
 
-const StudentsStudentIdRoute = StudentsStudentIdImport.update({
-  id: '/students/$studentId',
-  path: '/students/$studentId',
-  getParentRoute: () => rootRoute,
+const ProtectedDashboardIndexRoute = ProtectedDashboardIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProtectedDashboardRouteRoute,
 } as any)
 
-const ServicesServiceIdRoute = ServicesServiceIdImport.update({
-  id: '/services/$serviceId',
-  path: '/services/$serviceId',
-  getParentRoute: () => rootRoute,
-} as any)
+const UnprotectedStudentsStudentIdRoute =
+  UnprotectedStudentsStudentIdImport.update({
+    id: '/students/$studentId',
+    path: '/students/$studentId',
+    getParentRoute: () => UnprotectedRouteRoute,
+  } as any)
+
+const UnprotectedServicesServiceIdRoute =
+  UnprotectedServicesServiceIdImport.update({
+    id: '/services/$serviceId',
+    path: '/services/$serviceId',
+    getParentRoute: () => UnprotectedRouteRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_unprotected': {
+      id: '/_unprotected'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof UnprotectedRouteImport
       parentRoute: typeof rootRoute
     }
-    '/signin': {
-      id: '/signin'
+    '/_protected/dashboard': {
+      id: '/_protected/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof ProtectedDashboardRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/_unprotected/signin': {
+      id: '/_unprotected/signin'
       path: '/signin'
       fullPath: '/signin'
-      preLoaderRoute: typeof SigninImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof UnprotectedSigninImport
+      parentRoute: typeof UnprotectedRouteImport
     }
-    '/signup': {
-      id: '/signup'
+    '/_unprotected/signup': {
+      id: '/_unprotected/signup'
       path: '/signup'
       fullPath: '/signup'
-      preLoaderRoute: typeof SignupImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof UnprotectedSignupImport
+      parentRoute: typeof UnprotectedRouteImport
     }
-    '/services/$serviceId': {
-      id: '/services/$serviceId'
+    '/_unprotected/': {
+      id: '/_unprotected/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof UnprotectedIndexImport
+      parentRoute: typeof UnprotectedRouteImport
+    }
+    '/_unprotected/services/$serviceId': {
+      id: '/_unprotected/services/$serviceId'
       path: '/services/$serviceId'
       fullPath: '/services/$serviceId'
-      preLoaderRoute: typeof ServicesServiceIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof UnprotectedServicesServiceIdImport
+      parentRoute: typeof UnprotectedRouteImport
     }
-    '/students/$studentId': {
-      id: '/students/$studentId'
+    '/_unprotected/students/$studentId': {
+      id: '/_unprotected/students/$studentId'
       path: '/students/$studentId'
       fullPath: '/students/$studentId'
-      preLoaderRoute: typeof StudentsStudentIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof UnprotectedStudentsStudentIdImport
+      parentRoute: typeof UnprotectedRouteImport
     }
-    '/services/': {
-      id: '/services/'
+    '/_protected/dashboard/': {
+      id: '/_protected/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof ProtectedDashboardIndexImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
+    '/_unprotected/services/': {
+      id: '/_unprotected/services/'
       path: '/services'
       fullPath: '/services'
-      preLoaderRoute: typeof ServicesIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof UnprotectedServicesIndexImport
+      parentRoute: typeof UnprotectedRouteImport
     }
-    '/students/': {
-      id: '/students/'
+    '/_unprotected/students/': {
+      id: '/_unprotected/students/'
       path: '/students'
       fullPath: '/students'
-      preLoaderRoute: typeof StudentsIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof UnprotectedStudentsIndexImport
+      parentRoute: typeof UnprotectedRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface UnprotectedRouteRouteChildren {
+  UnprotectedSigninRoute: typeof UnprotectedSigninRoute
+  UnprotectedSignupRoute: typeof UnprotectedSignupRoute
+  UnprotectedIndexRoute: typeof UnprotectedIndexRoute
+  UnprotectedServicesServiceIdRoute: typeof UnprotectedServicesServiceIdRoute
+  UnprotectedStudentsStudentIdRoute: typeof UnprotectedStudentsStudentIdRoute
+  UnprotectedServicesIndexRoute: typeof UnprotectedServicesIndexRoute
+  UnprotectedStudentsIndexRoute: typeof UnprotectedStudentsIndexRoute
+}
+
+const UnprotectedRouteRouteChildren: UnprotectedRouteRouteChildren = {
+  UnprotectedSigninRoute: UnprotectedSigninRoute,
+  UnprotectedSignupRoute: UnprotectedSignupRoute,
+  UnprotectedIndexRoute: UnprotectedIndexRoute,
+  UnprotectedServicesServiceIdRoute: UnprotectedServicesServiceIdRoute,
+  UnprotectedStudentsStudentIdRoute: UnprotectedStudentsStudentIdRoute,
+  UnprotectedServicesIndexRoute: UnprotectedServicesIndexRoute,
+  UnprotectedStudentsIndexRoute: UnprotectedStudentsIndexRoute,
+}
+
+const UnprotectedRouteRouteWithChildren =
+  UnprotectedRouteRoute._addFileChildren(UnprotectedRouteRouteChildren)
+
+interface ProtectedDashboardRouteRouteChildren {
+  ProtectedDashboardIndexRoute: typeof ProtectedDashboardIndexRoute
+}
+
+const ProtectedDashboardRouteRouteChildren: ProtectedDashboardRouteRouteChildren =
+  {
+    ProtectedDashboardIndexRoute: ProtectedDashboardIndexRoute,
+  }
+
+const ProtectedDashboardRouteRouteWithChildren =
+  ProtectedDashboardRouteRoute._addFileChildren(
+    ProtectedDashboardRouteRouteChildren,
+  )
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
-  '/services/$serviceId': typeof ServicesServiceIdRoute
-  '/students/$studentId': typeof StudentsStudentIdRoute
-  '/services': typeof ServicesIndexRoute
-  '/students': typeof StudentsIndexRoute
+  '': typeof UnprotectedRouteRouteWithChildren
+  '/dashboard': typeof ProtectedDashboardRouteRouteWithChildren
+  '/signin': typeof UnprotectedSigninRoute
+  '/signup': typeof UnprotectedSignupRoute
+  '/': typeof UnprotectedIndexRoute
+  '/services/$serviceId': typeof UnprotectedServicesServiceIdRoute
+  '/students/$studentId': typeof UnprotectedStudentsStudentIdRoute
+  '/dashboard/': typeof ProtectedDashboardIndexRoute
+  '/services': typeof UnprotectedServicesIndexRoute
+  '/students': typeof UnprotectedStudentsIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
-  '/services/$serviceId': typeof ServicesServiceIdRoute
-  '/students/$studentId': typeof StudentsStudentIdRoute
-  '/services': typeof ServicesIndexRoute
-  '/students': typeof StudentsIndexRoute
+  '/signin': typeof UnprotectedSigninRoute
+  '/signup': typeof UnprotectedSignupRoute
+  '/': typeof UnprotectedIndexRoute
+  '/services/$serviceId': typeof UnprotectedServicesServiceIdRoute
+  '/students/$studentId': typeof UnprotectedStudentsStudentIdRoute
+  '/dashboard': typeof ProtectedDashboardIndexRoute
+  '/services': typeof UnprotectedServicesIndexRoute
+  '/students': typeof UnprotectedStudentsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/signin': typeof SigninRoute
-  '/signup': typeof SignupRoute
-  '/services/$serviceId': typeof ServicesServiceIdRoute
-  '/students/$studentId': typeof StudentsStudentIdRoute
-  '/services/': typeof ServicesIndexRoute
-  '/students/': typeof StudentsIndexRoute
+  '/_unprotected': typeof UnprotectedRouteRouteWithChildren
+  '/_protected/dashboard': typeof ProtectedDashboardRouteRouteWithChildren
+  '/_unprotected/signin': typeof UnprotectedSigninRoute
+  '/_unprotected/signup': typeof UnprotectedSignupRoute
+  '/_unprotected/': typeof UnprotectedIndexRoute
+  '/_unprotected/services/$serviceId': typeof UnprotectedServicesServiceIdRoute
+  '/_unprotected/students/$studentId': typeof UnprotectedStudentsStudentIdRoute
+  '/_protected/dashboard/': typeof ProtectedDashboardIndexRoute
+  '/_unprotected/services/': typeof UnprotectedServicesIndexRoute
+  '/_unprotected/students/': typeof UnprotectedStudentsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
+    | ''
+    | '/dashboard'
     | '/signin'
     | '/signup'
+    | '/'
     | '/services/$serviceId'
     | '/students/$studentId'
+    | '/dashboard/'
     | '/services'
     | '/students'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/signin'
     | '/signup'
+    | '/'
     | '/services/$serviceId'
     | '/students/$studentId'
+    | '/dashboard'
     | '/services'
     | '/students'
   id:
     | '__root__'
-    | '/'
-    | '/signin'
-    | '/signup'
-    | '/services/$serviceId'
-    | '/students/$studentId'
-    | '/services/'
-    | '/students/'
+    | '/_unprotected'
+    | '/_protected/dashboard'
+    | '/_unprotected/signin'
+    | '/_unprotected/signup'
+    | '/_unprotected/'
+    | '/_unprotected/services/$serviceId'
+    | '/_unprotected/students/$studentId'
+    | '/_protected/dashboard/'
+    | '/_unprotected/services/'
+    | '/_unprotected/students/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  SigninRoute: typeof SigninRoute
-  SignupRoute: typeof SignupRoute
-  ServicesServiceIdRoute: typeof ServicesServiceIdRoute
-  StudentsStudentIdRoute: typeof StudentsStudentIdRoute
-  ServicesIndexRoute: typeof ServicesIndexRoute
-  StudentsIndexRoute: typeof StudentsIndexRoute
+  UnprotectedRouteRoute: typeof UnprotectedRouteRouteWithChildren
+  ProtectedDashboardRouteRoute: typeof ProtectedDashboardRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  SigninRoute: SigninRoute,
-  SignupRoute: SignupRoute,
-  ServicesServiceIdRoute: ServicesServiceIdRoute,
-  StudentsStudentIdRoute: StudentsStudentIdRoute,
-  ServicesIndexRoute: ServicesIndexRoute,
-  StudentsIndexRoute: StudentsIndexRoute,
+  UnprotectedRouteRoute: UnprotectedRouteRouteWithChildren,
+  ProtectedDashboardRouteRoute: ProtectedDashboardRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -213,35 +297,59 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/signin",
-        "/signup",
-        "/services/$serviceId",
-        "/students/$studentId",
-        "/services/",
-        "/students/"
+        "/_unprotected",
+        "/_protected/dashboard"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_unprotected": {
+      "filePath": "_unprotected/route.tsx",
+      "children": [
+        "/_unprotected/signin",
+        "/_unprotected/signup",
+        "/_unprotected/",
+        "/_unprotected/services/$serviceId",
+        "/_unprotected/students/$studentId",
+        "/_unprotected/services/",
+        "/_unprotected/students/"
+      ]
     },
-    "/signin": {
-      "filePath": "signin.tsx"
+    "/_protected/dashboard": {
+      "filePath": "_protected/dashboard/route.tsx",
+      "children": [
+        "/_protected/dashboard/"
+      ]
     },
-    "/signup": {
-      "filePath": "signup.tsx"
+    "/_unprotected/signin": {
+      "filePath": "_unprotected/signin.tsx",
+      "parent": "/_unprotected"
     },
-    "/services/$serviceId": {
-      "filePath": "services/$serviceId.tsx"
+    "/_unprotected/signup": {
+      "filePath": "_unprotected/signup.tsx",
+      "parent": "/_unprotected"
     },
-    "/students/$studentId": {
-      "filePath": "students/$studentId.tsx"
+    "/_unprotected/": {
+      "filePath": "_unprotected/index.tsx",
+      "parent": "/_unprotected"
     },
-    "/services/": {
-      "filePath": "services/index.tsx"
+    "/_unprotected/services/$serviceId": {
+      "filePath": "_unprotected/services/$serviceId.tsx",
+      "parent": "/_unprotected"
     },
-    "/students/": {
-      "filePath": "students/index.tsx"
+    "/_unprotected/students/$studentId": {
+      "filePath": "_unprotected/students/$studentId.tsx",
+      "parent": "/_unprotected"
+    },
+    "/_protected/dashboard/": {
+      "filePath": "_protected/dashboard/index.tsx",
+      "parent": "/_protected/dashboard"
+    },
+    "/_unprotected/services/": {
+      "filePath": "_unprotected/services/index.tsx",
+      "parent": "/_unprotected"
+    },
+    "/_unprotected/students/": {
+      "filePath": "_unprotected/students/index.tsx",
+      "parent": "/_unprotected"
     }
   }
 }

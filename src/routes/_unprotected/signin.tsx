@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/signin')({
+export const Route = createFileRoute('/_unprotected/signin')({
   component: RouteComponent,
 })
 

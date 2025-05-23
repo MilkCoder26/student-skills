@@ -5,7 +5,7 @@ import ServiceSection from '@/components/ServiceSection'
 import StudentSection from '@/components/StudentSection'
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_unprotected/')({
   component: App,
 })
 

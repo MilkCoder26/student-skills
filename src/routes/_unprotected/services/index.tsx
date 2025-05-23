@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { MdOutlineMiscellaneousServices } from 'react-icons/md'
 
-export const Route = createFileRoute('/services/')({
+export const Route = createFileRoute('/_unprotected/services/')({
   component: RouteComponent,
 })
 

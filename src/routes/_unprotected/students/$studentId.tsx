@@ -1,6 +1,6 @@
-import { createFileRoute, Link, useParams } from '@tanstack/react-router'
-import MenImage from '../../assets/men-profile.png'
-import WomenImage from '../../assets/women-profile.png'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import MenImage from '@/assets/men-profile.png'
+import WomenImage from '@/assets/women-profile.png'
 import { HiArrowLeft } from 'react-icons/hi'
 import { MdEmail, MdPhone } from 'react-icons/md'
 import { FaGraduationCap } from 'react-icons/fa'
@@ -46,16 +46,13 @@ const mockStudents: Student[] = [
   },
 ]
 
-export const Route = createFileRoute('/students/$studentId')({
+export const Route = createFileRoute('/_unprotected/students/$studentId')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const id = useParams({
-    from: '/students/$studentId',
-    select: (p) => p.studentId,
-  })
-  const student = mockStudents.find((s) => s.id.toString() === id)
+  const { studentId } = Route.useParams()
+  const student = mockStudents.find((s) => s.id.toString() === studentId)
 
   if (!student) {
     return (

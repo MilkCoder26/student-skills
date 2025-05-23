@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/signup')({
+export const Route = createFileRoute('/_unprotected/signup')({
   component: RouteComponent,
 })
 
@@ -145,7 +145,7 @@ function RouteComponent() {
 
           <div className="text-sm text-center text-gray-700 font-bold">
             Déjà un compte ?{' '}
-            <a href="/login" className="text-gray-600 font-medium">
+            <a href="/signin" className="text-gray-600 font-medium">
               Connectez vous
             </a>
           </div>

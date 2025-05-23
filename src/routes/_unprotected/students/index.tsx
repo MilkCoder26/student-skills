@@ -2,7 +2,7 @@ import StudentCard, { type Student } from '@/components/StudentCard'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/students/')({
+export const Route = createFileRoute('/_unprotected/students/')({
   component: RouteComponent,
 })
 
