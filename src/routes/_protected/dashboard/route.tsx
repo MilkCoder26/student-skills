@@ -40,7 +40,7 @@ function RouteComponent() {
 
         {/* Main content */}
         <div className="flex-1 lg:ml-0">
-          <main className="min-h-screen">
+          <main className="min-h-screen p-6">
             <Outlet />
           </main>
         </div>

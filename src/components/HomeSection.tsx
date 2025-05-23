@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import illustration from '../assets/illustration.png'
 
 export default function HomeSection() {
@@ -23,12 +24,12 @@ export default function HomeSection() {
             </p>
 
             <div className="pt-4 animate-fade-in-up-delay-2">
-              <a
-                href="#services"
+              <Link
+                to="/signin"
                 className="inline-block bg-linear-to-r from-primary-800 to-primary-600 text-white text-bred-900 px-6 py-4 rounded-full font-semibold hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 Commencez
-              </a>
+              </Link>
             </div>
           </div>
 

@@ -1,6 +1,5 @@
-// File: components/SideBar.tsx
 import React from 'react'
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { AiOutlineClose, AiOutlineHome, AiOutlineUser } from 'react-icons/ai'
 import { MdOutlineMiscellaneousServices } from 'react-icons/md'
 import clsx from 'clsx'
@@ -11,9 +10,6 @@ interface SideBarProps {
 }
 
 const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
-  const router = useRouter()
-  const currentPath = router.state.location.pathname
-
   const navItems = [
     {
       name: 'Tableau de bord',
@@ -35,9 +31,6 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
     },
   ]
 
-  const isActive = (path: string) =>
-    currentPath === path || currentPath.startsWith(path)
-
   return (
     <>
       {/* Enhanced Overlay for mobile */}
@@ -55,7 +48,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
       {/* Beautiful Sidebar */}
       <aside
         className={clsx(
-          'fixed z-50 inset-y-0 left-0 w-72 bg-primary-100 backdrop-blur-xl border-r border-gray-100 shadow-xl transform transition-all duration-300 ease-out lg:static lg:translate-x-0',
+          'fixed z-50 inset-y-0 left-0 w-72 bg-primary-100 backdrop-blur-xl border-r border-white/20 shadow-xl transform transition-all duration-300 ease-out lg:static lg:translate-x-0',
           {
             '-translate-x-full': !isOpen,
             'translate-x-0': isOpen,
@@ -94,66 +87,41 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
           <div className="mb-6">
             {navItems.map((item) => {
               const Icon = item.icon
-              const active = isActive(item.path)
 
               return (
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={clsx(
-                    'group flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-300 ease-out relative overflow-hidden',
-                    {
-                      'bg-primary-50 to-transparent border border-primary-200/50 shadow-lg shadow-primary-500/10':
-                        active,
-                      'hover:bg-gradient-to-r hover:from-gray-50 hover:to-primary-50/30 hover:shadow-md hover:scale-[1.02] hover:border hover:border-gray-200/50':
-                        !active,
-                    },
-                  )}
+                  activeOptions={{ exact: true }}
+                  activeProps={{
+                    className:
+                      'active-nav-item bg-gradient-to-r from-primary-100 via-primary-100 to-transparent border border-primary-200/50 shadow-lg shadow-primary-500/10',
+                  }}
+                  className="group flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-300 ease-out relative overflow-hidden hover:bg-gradient-to-r hover:from-gray-50 hover:to-primary-50/30 hover:shadow-md hover:scale-[1.02] hover:border hover:border-gray-200/50"
                   onClick={toggleSidebar}
                 >
                   {/* Active indicator */}
-                  {active && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-800 rounded-full" />
-                  )}
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-800 rounded-full opacity-0 group-[.active-nav-item]:opacity-100 transition-opacity duration-300" />
 
                   {/* Icon with gradient background */}
                   <div
                     className={clsx(
-                      'flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300',
-                      {
-                        [`bg-gradient-to-br ${item.gradient} shadow-lg shadow-primary-100/25`]:
-                          active,
-                        'bg-gray-100 group-hover:bg-gradient-to-br group-hover:from-gray-200 group-hover:to-primary-100':
-                          !active,
-                      },
+                      'flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300 bg-gray-100 group-hover:bg-gradient-to-br group-hover:from-gray-200 group-hover:to-primary-100',
+                      `group-[.active-nav-item]:bg-gradient-to-br group-[.active-nav-item]:${item.gradient} group-[.active-nav-item]:shadow-lg group-[.active-nav-item]:shadow-primary-500/25`,
                     )}
                   >
-                    <Icon
-                      className={clsx('w-5 h-5 transition-all duration-300', {
-                        'text-white': active,
-                        'text-gray-600 group-hover:text-primary-600': !active,
-                      })}
-                    />
+                    <Icon className="w-5 h-5 transition-all duration-300 text-gray-600 group-hover:text-primary-600 group-[.active-nav-item]:text-white" />
                   </div>
 
                   {/* Text */}
-                  <span
-                    className={clsx(
-                      'font-semibold transition-all duration-300',
-                      {
-                        'text-primary-700': active,
-                        'text-gray-700 group-hover:text-primary-600': !active,
-                      },
-                    )}
-                  >
+                  <span className="font-semibold transition-all duration-300 text-gray-700 group-hover:text-primary-600 group-[.active-nav-item]:text-primary-700">
                     {item.name}
                   </span>
-                  {/* Hover effect indicator */}
-                  {!active && (
-                    <div className="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <div className="w-2 h-2 bg-gradient-to-r from-primary-400 to-primary-500 rounded-full" />
-                    </div>
-                  )}
+
+                  {/* Hover effect indicator - only show when not active */}
+                  <div className="ml-auto opacity-0 group-hover:opacity-100 group-[.active-nav-item]:!opacity-0 transition-all duration-300">
+                    <div className="w-2 h-2 bg-gradient-to-r from-primary-400 to-primary-500 rounded-full" />
+                  </div>
                 </Link>
               )
             })}
@@ -164,12 +132,10 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <Link
             to="/"
-            className="flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-300 ease-out relative overflow-hidden"
+            className="flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-300 ease-out relative overflow-hidden hover:bg-gradient-to-r hover:from-gray-50 hover:to-primary-50/30 hover:shadow-md hover:scale-[1.02] hover:border hover:border-gray-200/50"
           >
             <AiOutlineUser className="w-7 h-7" />
-            <span className="text-md font-semibold text-gray-700">
-              Se déconnecter
-            </span>
+            <span className="text-md font-bold text-gray-900">Déconnexion</span>
           </Link>
           <div className="bg-gradient-to-r from-primary-50 via-white to-primary-50 border border-primary-100/50 rounded-2xl p-4 shadow-lg">
             <div className="flex items-center space-x-3">
