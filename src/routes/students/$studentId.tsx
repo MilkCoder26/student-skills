@@ -69,7 +69,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-white py-16">
-      <div className="bg-gradient-to-r from-primary-600 to-primary-600 text-white shadow-lg">
+      <div className="bg-gradient-to-r from-primary-800 to-primary-600 text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <Link
             to="/students"
