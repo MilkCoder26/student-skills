@@ -9,7 +9,6 @@ import {
   MdPerson,
   MdEmail,
   MdPhone,
-  MdSchool,
   MdStar,
   MdAdd,
   MdClose,
