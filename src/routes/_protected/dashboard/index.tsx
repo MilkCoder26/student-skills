@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { AiOutlineHome, AiOutlineUser, AiOutlinePlus } from 'react-icons/ai'
 import { MdOutlineMiscellaneousServices } from 'react-icons/md'
 
@@ -82,9 +82,12 @@ function RouteComponent() {
             </p>
           </div>
 
-          <button className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-lg duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform">
+          <Link
+            to="/dashboard/services"
+            className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-lg duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-transform"
+          >
             Proposer un service
-          </button>
+          </Link>
         </div>
       </div>
 

@@ -21,8 +21,9 @@ import { Route as UnprotectedServicesIndexImport } from './routes/_unprotected/s
 import { Route as ProtectedDashboardIndexImport } from './routes/_protected/dashboard/index'
 import { Route as UnprotectedStudentsStudentIdImport } from './routes/_unprotected/students/$studentId'
 import { Route as UnprotectedServicesServiceIdImport } from './routes/_unprotected/services/$serviceId'
-import { Route as ProtectedDashboardServicesImport } from './routes/_protected/dashboard/services'
 import { Route as ProtectedDashboardProfileImport } from './routes/_protected/dashboard/profile'
+import { Route as ProtectedDashboardServicesIndexImport } from './routes/_protected/dashboard/services/index'
+import { Route as ProtectedDashboardServicesServiceIdImport } from './routes/_protected/dashboard/services/$serviceId'
 
 // Create/Update Routes
 
@@ -87,19 +88,25 @@ const UnprotectedServicesServiceIdRoute =
     getParentRoute: () => UnprotectedRouteRoute,
   } as any)
 
-const ProtectedDashboardServicesRoute = ProtectedDashboardServicesImport.update(
-  {
-    id: '/services',
-    path: '/services',
-    getParentRoute: () => ProtectedDashboardRouteRoute,
-  } as any,
-)
-
 const ProtectedDashboardProfileRoute = ProtectedDashboardProfileImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => ProtectedDashboardRouteRoute,
 } as any)
+
+const ProtectedDashboardServicesIndexRoute =
+  ProtectedDashboardServicesIndexImport.update({
+    id: '/services/',
+    path: '/services/',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
+  } as any)
+
+const ProtectedDashboardServicesServiceIdRoute =
+  ProtectedDashboardServicesServiceIdImport.update({
+    id: '/services/$serviceId',
+    path: '/services/$serviceId',
+    getParentRoute: () => ProtectedDashboardRouteRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -147,13 +154,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardProfileImport
       parentRoute: typeof ProtectedDashboardRouteImport
     }
-    '/_protected/dashboard/services': {
-      id: '/_protected/dashboard/services'
-      path: '/services'
-      fullPath: '/dashboard/services'
-      preLoaderRoute: typeof ProtectedDashboardServicesImport
-      parentRoute: typeof ProtectedDashboardRouteImport
-    }
     '/_unprotected/services/$serviceId': {
       id: '/_unprotected/services/$serviceId'
       path: '/services/$serviceId'
@@ -189,6 +189,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UnprotectedStudentsIndexImport
       parentRoute: typeof UnprotectedRouteImport
     }
+    '/_protected/dashboard/services/$serviceId': {
+      id: '/_protected/dashboard/services/$serviceId'
+      path: '/services/$serviceId'
+      fullPath: '/dashboard/services/$serviceId'
+      preLoaderRoute: typeof ProtectedDashboardServicesServiceIdImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
+    '/_protected/dashboard/services/': {
+      id: '/_protected/dashboard/services/'
+      path: '/services'
+      fullPath: '/dashboard/services'
+      preLoaderRoute: typeof ProtectedDashboardServicesIndexImport
+      parentRoute: typeof ProtectedDashboardRouteImport
+    }
   }
 }
 
@@ -219,15 +233,18 @@ const UnprotectedRouteRouteWithChildren =
 
 interface ProtectedDashboardRouteRouteChildren {
   ProtectedDashboardProfileRoute: typeof ProtectedDashboardProfileRoute
-  ProtectedDashboardServicesRoute: typeof ProtectedDashboardServicesRoute
   ProtectedDashboardIndexRoute: typeof ProtectedDashboardIndexRoute
+  ProtectedDashboardServicesServiceIdRoute: typeof ProtectedDashboardServicesServiceIdRoute
+  ProtectedDashboardServicesIndexRoute: typeof ProtectedDashboardServicesIndexRoute
 }
 
 const ProtectedDashboardRouteRouteChildren: ProtectedDashboardRouteRouteChildren =
   {
     ProtectedDashboardProfileRoute: ProtectedDashboardProfileRoute,
-    ProtectedDashboardServicesRoute: ProtectedDashboardServicesRoute,
     ProtectedDashboardIndexRoute: ProtectedDashboardIndexRoute,
+    ProtectedDashboardServicesServiceIdRoute:
+      ProtectedDashboardServicesServiceIdRoute,
+    ProtectedDashboardServicesIndexRoute: ProtectedDashboardServicesIndexRoute,
   }
 
 const ProtectedDashboardRouteRouteWithChildren =
@@ -242,12 +259,13 @@ export interface FileRoutesByFullPath {
   '/signup': typeof UnprotectedSignupRoute
   '/': typeof UnprotectedIndexRoute
   '/dashboard/profile': typeof ProtectedDashboardProfileRoute
-  '/dashboard/services': typeof ProtectedDashboardServicesRoute
   '/services/$serviceId': typeof UnprotectedServicesServiceIdRoute
   '/students/$studentId': typeof UnprotectedStudentsStudentIdRoute
   '/dashboard/': typeof ProtectedDashboardIndexRoute
   '/services': typeof UnprotectedServicesIndexRoute
   '/students': typeof UnprotectedStudentsIndexRoute
+  '/dashboard/services/$serviceId': typeof ProtectedDashboardServicesServiceIdRoute
+  '/dashboard/services': typeof ProtectedDashboardServicesIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -255,12 +273,13 @@ export interface FileRoutesByTo {
   '/signup': typeof UnprotectedSignupRoute
   '/': typeof UnprotectedIndexRoute
   '/dashboard/profile': typeof ProtectedDashboardProfileRoute
-  '/dashboard/services': typeof ProtectedDashboardServicesRoute
   '/services/$serviceId': typeof UnprotectedServicesServiceIdRoute
   '/students/$studentId': typeof UnprotectedStudentsStudentIdRoute
   '/dashboard': typeof ProtectedDashboardIndexRoute
   '/services': typeof UnprotectedServicesIndexRoute
   '/students': typeof UnprotectedStudentsIndexRoute
+  '/dashboard/services/$serviceId': typeof ProtectedDashboardServicesServiceIdRoute
+  '/dashboard/services': typeof ProtectedDashboardServicesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -271,12 +290,13 @@ export interface FileRoutesById {
   '/_unprotected/signup': typeof UnprotectedSignupRoute
   '/_unprotected/': typeof UnprotectedIndexRoute
   '/_protected/dashboard/profile': typeof ProtectedDashboardProfileRoute
-  '/_protected/dashboard/services': typeof ProtectedDashboardServicesRoute
   '/_unprotected/services/$serviceId': typeof UnprotectedServicesServiceIdRoute
   '/_unprotected/students/$studentId': typeof UnprotectedStudentsStudentIdRoute
   '/_protected/dashboard/': typeof ProtectedDashboardIndexRoute
   '/_unprotected/services/': typeof UnprotectedServicesIndexRoute
   '/_unprotected/students/': typeof UnprotectedStudentsIndexRoute
+  '/_protected/dashboard/services/$serviceId': typeof ProtectedDashboardServicesServiceIdRoute
+  '/_protected/dashboard/services/': typeof ProtectedDashboardServicesIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -288,24 +308,26 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/dashboard/profile'
-    | '/dashboard/services'
     | '/services/$serviceId'
     | '/students/$studentId'
     | '/dashboard/'
     | '/services'
     | '/students'
+    | '/dashboard/services/$serviceId'
+    | '/dashboard/services'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/signin'
     | '/signup'
     | '/'
     | '/dashboard/profile'
-    | '/dashboard/services'
     | '/services/$serviceId'
     | '/students/$studentId'
     | '/dashboard'
     | '/services'
     | '/students'
+    | '/dashboard/services/$serviceId'
+    | '/dashboard/services'
   id:
     | '__root__'
     | '/_unprotected'
@@ -314,12 +336,13 @@ export interface FileRouteTypes {
     | '/_unprotected/signup'
     | '/_unprotected/'
     | '/_protected/dashboard/profile'
-    | '/_protected/dashboard/services'
     | '/_unprotected/services/$serviceId'
     | '/_unprotected/students/$studentId'
     | '/_protected/dashboard/'
     | '/_unprotected/services/'
     | '/_unprotected/students/'
+    | '/_protected/dashboard/services/$serviceId'
+    | '/_protected/dashboard/services/'
   fileRoutesById: FileRoutesById
 }
 
@@ -363,8 +386,9 @@ export const routeTree = rootRoute
       "filePath": "_protected/dashboard/route.tsx",
       "children": [
         "/_protected/dashboard/profile",
-        "/_protected/dashboard/services",
-        "/_protected/dashboard/"
+        "/_protected/dashboard/",
+        "/_protected/dashboard/services/$serviceId",
+        "/_protected/dashboard/services/"
       ]
     },
     "/_unprotected/signin": {
@@ -381,10 +405,6 @@ export const routeTree = rootRoute
     },
     "/_protected/dashboard/profile": {
       "filePath": "_protected/dashboard/profile.tsx",
-      "parent": "/_protected/dashboard"
-    },
-    "/_protected/dashboard/services": {
-      "filePath": "_protected/dashboard/services.tsx",
       "parent": "/_protected/dashboard"
     },
     "/_unprotected/services/$serviceId": {
@@ -406,6 +426,14 @@ export const routeTree = rootRoute
     "/_unprotected/students/": {
       "filePath": "_unprotected/students/index.tsx",
       "parent": "/_unprotected"
+    },
+    "/_protected/dashboard/services/$serviceId": {
+      "filePath": "_protected/dashboard/services/$serviceId.tsx",
+      "parent": "/_protected/dashboard"
+    },
+    "/_protected/dashboard/services/": {
+      "filePath": "_protected/dashboard/services/index.tsx",
+      "parent": "/_protected/dashboard"
     }
   }
 }

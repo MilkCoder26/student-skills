@@ -13,36 +13,12 @@ import {
   MdAdd,
   MdClose,
 } from 'react-icons/md'
+import type { Student } from '@/components/StudentCard'
 
 export const Route = createFileRoute('/_protected/dashboard/profile')({
   component: RouteComponent,
 })
 
-export type Service = {
-  id: number
-  title: string
-  description: string
-  price: string
-  studentName: string
-  category: string
-  priceRange: string
-}
-
-export type Student = {
-  id: number
-  name: string
-  classe: string
-  niveau: number
-  competence: string
-  sexe: string
-  skills: string[]
-  email?: string
-  phone?: string
-  services?: Service[]
-  bio?: string
-}
-
-// Données d'exemple
 const mockStudent: Student = {
   id: 1,
   name: 'Ahmed Benali',

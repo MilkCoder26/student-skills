@@ -2,8 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { MdOutlineMiscellaneousServices, MdAdd } from 'react-icons/md'
 import { useState } from 'react'
 import ServiceCard from '@/components/ServiceCard'
+import AddServiceModal from '@/components/AddServiceModal'
 
-export const Route = createFileRoute('/_protected/dashboard/services')({
+export const Route = createFileRoute('/_protected/dashboard/services/')({
   component: RouteComponent,
 })
 
@@ -18,7 +19,6 @@ export type Service = {
   isOwner?: boolean
 }
 
-// Données d'exemple
 const mockServices: Service[] = [
   {
     id: 1,
@@ -81,9 +81,27 @@ function RouteComponent() {
   const [activeTab, setActiveTab] = useState<'my-services' | 'all-services'>(
     'my-services',
   )
+  const [services, setServices] = useState<Service[]>(mockServices)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const myServices = mockServices.filter((service) => service.isOwner)
-  const otherServices = mockServices.filter((service) => !service.isOwner)
+  const myServices = services.filter((service) => service.isOwner)
+  const otherServices = services.filter((service) => !service.isOwner)
+
+  const handleAddService = (
+    newServiceData: Omit<Service, 'id' | 'isOwner'>,
+  ) => {
+    const newService: Service = {
+      ...newServiceData,
+      id: Math.max(...services.map((s) => s.id), 0) + 1,
+      isOwner: true,
+    }
+
+    setServices((prev) => [...prev, newService])
+    setIsModalOpen(false)
+  }
+
+  const openModal = () => setIsModalOpen(true)
+  const closeModal = () => setIsModalOpen(false)
 
   return (
     <div className="min-h-screen ">
@@ -97,7 +115,10 @@ function RouteComponent() {
                 Gérez vos services et découvrez de nouveaux talents
               </p>
             </div>
-            <button className="bg-primary-950 cursor-pointer text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 shadow-lg">
+            <button
+              onClick={openModal}
+              className="bg-primary-900 hover:bg-primary-800 cursor-pointer text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 shadow-lg"
+            >
               <MdAdd className="text-xl" />
               Ajouter un service
             </button>
@@ -107,7 +128,7 @@ function RouteComponent() {
           <div className="flex space-x-1 bg-gray-200 p-1 rounded-lg w-fit">
             <button
               onClick={() => setActiveTab('my-services')}
-              className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+              className={`px-6 py-2 rounded-md font-medium transition-all cursor-pointer duration-200 ${
                 activeTab === 'my-services'
                   ? 'bg-white text-primary-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-800'
@@ -117,7 +138,7 @@ function RouteComponent() {
             </button>
             <button
               onClick={() => setActiveTab('all-services')}
-              className={`px-6 py-2 rounded-md font-medium transition-all duration-200 ${
+              className={`px-6 py-2 rounded-md font-medium transition-all cursor-pointer duration-200 ${
                 activeTab === 'all-services'
                   ? 'bg-white text-primary-600 shadow-sm'
                   : 'text-gray-600 hover:text-gray-800'
@@ -150,7 +171,10 @@ function RouteComponent() {
                 <p className="text-gray-500 mb-6">
                   Commencez par créer votre premier service
                 </p>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 mx-auto">
+                <button
+                  onClick={openModal}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 mx-auto"
+                >
                   <MdAdd className="text-xl" />
                   Créer mon premier service
                 </button>
@@ -171,6 +195,12 @@ function RouteComponent() {
           </div>
         )}
       </div>
+
+      <AddServiceModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSubmit={handleAddService}
+      />
     </div>
   )
 }

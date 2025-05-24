@@ -29,9 +29,13 @@ const ServiceCard = ({
 
       {/* Bouton modifier pour mes services */}
       {isOwner && (
-        <button className="absolute top-2 left-2 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors duration-200">
+        <Link
+          to="/dashboard/services/$serviceId"
+          params={{ serviceId: service.id.toString() }}
+          className="absolute top-2 left-2 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors duration-200 inline-block"
+        >
           <MdEdit className="text-gray-600 text-sm" />
-        </button>
+        </Link>
       )}
 
       {/* Service image */}
@@ -66,9 +70,13 @@ const ServiceCard = ({
 
         {/* Action button */}
         {isOwner ? (
-          <button className="w-full bg-gray-100 text-gray-800 hover:bg-blue-200 font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-sm">
+          <Link
+            to="/dashboard/services/$serviceId"
+            params={{ serviceId: service.id.toString() }}
+            className="block w-full bg-gray-100 text-gray-800 hover:bg-gray-200 font-medium py-2 px-4 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-sm text-center"
+          >
             Gérer ce service
-          </button>
+          </Link>
         ) : (
           <Link
             to="/services/$serviceId"
