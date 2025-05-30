@@ -1,83 +1,46 @@
-import StudentCard, { type Student } from '@/components/StudentCard'
+import StudentCard from '@/components/StudentCard'
+import type { Student } from '@/types'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export const Route = createFileRoute('/_unprotected/students/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const allStudents: Student[] = [
-    {
-      id: 1,
-      name: 'Tenena SEKONGO',
-      classe: 'SDDI',
-      niveau: 4,
-      competence: 'Développement site web',
-      sexe: 'male',
-      skills: ['React', 'JavaScript', 'CSS'],
-    },
-    {
-      id: 2,
-      name: 'Marie DUBOIS',
-      classe: 'SRT',
-      niveau: 3,
-      competence: 'Cybersécurité et réseaux',
-      sexe: 'female',
-      skills: ['Sécurité', 'Réseaux', 'Linux'],
-    },
-    {
-      id: 3,
-      name: 'Ahmed HASSAN',
-      classe: 'GC',
-      niveau: 5,
-      competence: 'Applications mobiles',
-      sexe: 'male',
-      skills: ['Flutter', 'Dart', 'Firebase'],
-    },
-    {
-      id: 4,
-      name: 'Sophie MARTIN',
-      classe: 'SDDI',
-      niveau: 2,
-      competence: 'Design UX/UI',
-      sexe: 'female',
-      skills: ['Figma', 'Adobe XD', 'Photoshop'],
-    },
-    {
-      id: 5,
-      name: 'Lucas BERNARD',
-      classe: 'SRT',
-      niveau: 1,
-      competence: 'Administration système',
-      sexe: 'male',
-      skills: ['Windows Server', 'Active Directory', 'PowerShell'],
-    },
-    {
-      id: 6,
-      name: 'Emma LEROY',
-      classe: 'GC',
-      niveau: 4,
-      competence: 'Gestion de projet',
-      sexe: 'female',
-      skills: ['Scrum', 'Agile', 'MS Project'],
-    },
-  ]
+  const [students, setStudents] = useState<Student[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const [selectedClasse, setSelectedClasse] = useState<string>('all')
   const [selectedNiveau, setSelectedNiveau] = useState<string>('all')
   const [selectedSexe, setSelectedSexe] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState<string>('')
 
-  const filteredStudents = allStudents.filter((student) => {
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/students')
+        setStudents(response.data.data)
+        setLoading(false)
+      } catch (err) {
+        setError('Erreur lors du chargement des étudiants.')
+        setLoading(false)
+      }
+    }
+
+    fetchStudents()
+  }, [])
+
+  const filteredStudents = students.filter((student) => {
     const matchesClasse =
       selectedClasse === 'all' || student.classe === selectedClasse
     const matchesNiveau =
       selectedNiveau === 'all' || student.niveau.toString() === selectedNiveau
     const matchesSexe =
-      selectedSexe === 'all' ||
-      (selectedSexe === 'homme' && student.sexe === 'male') ||
-      (selectedSexe === 'femme' && student.sexe === 'female')
+      selectedSexe === 'all' || selectedSexe === student.sexe.toLowerCase()
     const matchesSearch =
       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.competence.toLowerCase().includes(searchTerm.toLowerCase())
@@ -90,6 +53,22 @@ function RouteComponent() {
     setSelectedNiveau('all')
     setSelectedSexe('all')
     setSearchTerm('')
+  }
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-red-500">
+        {error}
+      </div>
+    )
   }
 
   return (
@@ -149,8 +128,8 @@ function RouteComponent() {
               >
                 <option value="all">Toutes les classes</option>
                 <option value="SDDI">SDDI</option>
-                <option value="SRT">SRT</option>
                 <option value="GC">GC</option>
+                <option value="Réseaux & Télécoms">Réseaux & Télécoms</option>
               </select>
             </div>
 
@@ -184,8 +163,8 @@ function RouteComponent() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">Tous</option>
-                <option value="homme">Homme</option>
-                <option value="femme">Femme</option>
+                <option value="masculin">Homme</option>
+                <option value="féminin">Femme</option>
               </select>
             </div>
 

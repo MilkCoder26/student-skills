@@ -1,103 +1,68 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { MdOutlineMiscellaneousServices, MdAdd } from 'react-icons/md'
-import { useState } from 'react'
 import ServiceCard from '@/components/ServiceCard'
 import AddServiceModal from '@/components/AddServiceModal'
+import type { Service } from '@/types'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export const Route = createFileRoute('/_protected/dashboard/services/')({
   component: RouteComponent,
 })
 
-export type Service = {
-  id: number
-  title: string
-  description: string
-  price: string
-  studentName: string
-  category: string
-  priceRange: string
-  isOwner?: boolean
-}
-
-const mockServices: Service[] = [
-  {
-    id: 1,
-    title: 'Cours de Mathématiques',
-    description:
-      'Aide aux devoirs et préparation aux examens en mathématiques niveau lycée et première année universitaire.',
-    price: '80',
-    studentName: 'Ahmed Benali',
-    category: 'Éducation',
-    priceRange: '50-100',
-    isOwner: true,
-  },
-  {
-    id: 2,
-    title: 'Développement Web',
-    description:
-      'Création de sites web responsive avec React et Node.js. Portfolio inclus.',
-    price: '150',
-    studentName: 'Ahmed Benali',
-    category: 'Informatique',
-    priceRange: '100-200',
-    isOwner: true,
-  },
-  {
-    id: 3,
-    title: 'Traduction Français-Arabe',
-    description:
-      'Traduction de documents académiques et professionnels avec relecture incluse.',
-    price: '60',
-    studentName: 'Fatima Zahra',
-    category: 'Langues',
-    priceRange: '40-80',
-    isOwner: false,
-  },
-  {
-    id: 4,
-    title: 'Design Graphique',
-    description:
-      'Création de logos, flyers, et supports visuels pour événements étudiants.',
-    price: '120',
-    studentName: 'Youssef Amrani',
-    category: 'Design',
-    priceRange: '80-150',
-    isOwner: false,
-  },
-  {
-    id: 5,
-    title: 'Cours de Guitare',
-    description:
-      'Apprentissage de la guitare acoustique pour débutants et intermédiaires.',
-    price: '90',
-    studentName: 'Sarah Bennani',
-    category: 'Musique',
-    priceRange: '60-120',
-    isOwner: false,
-  },
-]
-
 function RouteComponent() {
   const [activeTab, setActiveTab] = useState<'my-services' | 'all-services'>(
     'my-services',
   )
-  const [services, setServices] = useState<Service[]>(mockServices)
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const myServices = services.filter((service) => service.isOwner)
-  const otherServices = services.filter((service) => !service.isOwner)
-
-  const handleAddService = (
-    newServiceData: Omit<Service, 'id' | 'isOwner'>,
-  ) => {
-    const newService: Service = {
-      ...newServiceData,
-      id: Math.max(...services.map((s) => s.id), 0) + 1,
-      isOwner: true,
+  // Get logged in student from localStorage
+  const studentData = JSON.parse(localStorage.getItem('student') || '{}')
+  const studentId = studentData?.id
+  console.log('Logged in student ID:', studentId)
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true)
+        const response = await axios.get('http://localhost:8000/api/services')
+        const servicesData = response.data.data
+        setServices(servicesData)
+      } catch (err) {
+        setError('Erreur lors du chargement des services.')
+        setLoading(false)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    setServices((prev) => [...prev, newService])
-    setIsModalOpen(false)
+    fetchServices()
+  }, [studentId])
+
+  const myServices = services.filter((service) => {
+    return service.student_id === studentId
+  })
+  const otherServices = services.filter((service) => {
+    return service.student_id !== studentId
+  })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-red-500">
+        {error}
+      </div>
+    )
   }
 
   const openModal = () => setIsModalOpen(true)
@@ -155,11 +120,7 @@ function RouteComponent() {
             {myServices.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {myServices.map((service) => (
-                  <ServiceCard
-                    key={service.id}
-                    service={service}
-                    isOwner={service.isOwner}
-                  />
+                  <ServiceCard key={service.id} service={service} isOwner />
                 ))}
               </div>
             ) : (
@@ -173,7 +134,7 @@ function RouteComponent() {
                 </p>
                 <button
                   onClick={openModal}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 mx-auto"
+                  className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2 mx-auto"
                 >
                   <MdAdd className="text-xl" />
                   Créer mon premier service
@@ -188,7 +149,7 @@ function RouteComponent() {
                 <ServiceCard
                   key={service.id}
                   service={service}
-                  isOwner={service.isOwner}
+                  isOwner={false}
                 />
               ))}
             </div>
@@ -199,7 +160,7 @@ function RouteComponent() {
       <AddServiceModal
         isOpen={isModalOpen}
         onClose={closeModal}
-        onSubmit={handleAddService}
+        setServices={setServices}
       />
     </div>
   )

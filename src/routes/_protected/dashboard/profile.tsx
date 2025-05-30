@@ -13,49 +13,18 @@ import {
   MdAdd,
   MdClose,
 } from 'react-icons/md'
-import type { Student } from '@/components/StudentCard'
+import type { Student } from '@/types'
 
 export const Route = createFileRoute('/_protected/dashboard/profile')({
   component: RouteComponent,
 })
 
-const mockStudent: Student = {
-  id: 1,
-  name: 'Ahmed Benali',
-  classe: 'Génie Informatique',
-  niveau: 3,
-  competence: 'Développement Web',
-  sexe: 'Homme',
-  skills: ['JavaScript', 'React', 'Node.js', 'Python', 'MongoDB'],
-  email: 'ahmed.benali@student.ac.ma',
-  phone: '+212 6 12 34 56 78',
-  bio: "Étudiant passionné par le développement web et les nouvelles technologies. J'aime partager mes connaissances et apprendre de nouveaux concepts. Toujours prêt à relever de nouveaux défis !",
-  services: [
-    {
-      id: 1,
-      title: 'Cours de Mathématiques',
-      description: 'Aide aux devoirs et préparation aux examens',
-      price: '80',
-      studentName: 'Ahmed Benali',
-      category: 'Éducation',
-      priceRange: '50-100',
-    },
-    {
-      id: 2,
-      title: 'Développement Web',
-      description: 'Création de sites web avec React',
-      price: '150',
-      studentName: 'Ahmed Benali',
-      category: 'Informatique',
-      priceRange: '100-200',
-    },
-  ],
-}
+const studentData = JSON.parse(localStorage.getItem('student') || '{}')
 
 function RouteComponent() {
-  const [student, setStudent] = useState<Student>(mockStudent)
+  const [student, setStudent] = useState<Student>(studentData)
   const [isEditing, setIsEditing] = useState(false)
-  const [editedStudent, setEditedStudent] = useState<Student>(mockStudent)
+  const [editedStudent, setEditedStudent] = useState<Student>(studentData)
   const [newSkill, setNewSkill] = useState('')
 
   const handleEdit = () => {
@@ -269,14 +238,14 @@ function RouteComponent() {
                     {isEditing ? (
                       <input
                         type="tel"
-                        value={editedStudent.phone || ''}
+                        value={editedStudent.phone_number || ''}
                         onChange={(e) =>
-                          handleInputChange('phone', e.target.value)
+                          handleInputChange('phone_number', e.target.value)
                         }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
                       />
                     ) : (
-                      <p className="text-gray-900">{student.phone}</p>
+                      <p className="text-gray-900">{student.phone_number}</p>
                     )}
                   </div>
                 </div>

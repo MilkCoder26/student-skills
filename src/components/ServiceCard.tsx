@@ -1,15 +1,10 @@
 import { Link } from '@tanstack/react-router'
 import { MdEdit, MdOutlineMiscellaneousServices } from 'react-icons/md'
 
-export type Service = {
-  id: number
-  title: string
-  description: string
-  price: string
-  studentName: string
-  category: string
-  priceRange: string
-}
+import type { Service, Student } from '../types'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import LoadingSpinner from './LoadingSpinner'
 
 const ServiceCard = ({
   service,
@@ -18,6 +13,43 @@ const ServiceCard = ({
   service: Service
   isOwner?: boolean
 }) => {
+  const [student, setStudent] = useState<Student | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/students/${service.student_id}`,
+        )
+        setStudent(response.data.data)
+        setLoading(false)
+      } catch (err) {
+        setError('Erreur lors du chargement des données.')
+        setLoading(false)
+      }
+    }
+
+    fetchStudent()
+  }, [])
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error || !student) {
+    return (
+      <div className="min-h-screen overflow-y-hidden flex justify-center items-center text-primary-500">
+        {error || 'Étudiant introuvable.'}
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4 transform hover:-translate-y-1 border border-gray-100 relative">
       {/* Badge pour mes services */}
@@ -55,9 +87,7 @@ const ServiceCard = ({
         {/* Student name */}
         <div className="mb-3">
           <p className="text-xs text-gray-500">Proposé par</p>
-          <p className="text-md font-medium text-primary-600">
-            {service.studentName}
-          </p>
+          <p className="text-md font-medium text-primary-600">{student.name}</p>
         </div>
 
         {/* Price */}

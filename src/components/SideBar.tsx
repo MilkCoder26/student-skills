@@ -8,7 +8,7 @@ interface SideBarProps {
   isOpen: boolean
   toggleSidebar: () => void
 }
-
+const studentData = JSON.parse(localStorage.getItem('student') || '{}')
 const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
   const navItems = [
     {
@@ -149,7 +149,7 @@ const SideBar: React.FC<SideBarProps> = ({ isOpen, toggleSidebar }) => {
                   Étudiant
                 </p>
                 <p className="text-xs text-gray-500 truncate">
-                  etudiant@campus.fr
+                  {studentData.email || 'email non disponible'}
                 </p>
               </div>
             </div>

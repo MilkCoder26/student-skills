@@ -1,92 +1,64 @@
-import ServiceCard, { type Service } from '@/components/ServiceCard'
+import ServiceCard from '@/components/ServiceCard'
+import type { Service, Category } from '@/types'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MdOutlineMiscellaneousServices } from 'react-icons/md'
+import axios from 'axios'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export const Route = createFileRoute('/_unprotected/services/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const allServices: Service[] = [
-    {
-      id: 1,
-      title: 'Développement Site Web',
-      description:
-        'Création de sites web modernes et responsives avec les dernières technologies',
-      price: '2500',
-      studentName: 'Tenena SEKONGO',
-      category: 'web',
-      priceRange: '2000-5000',
-    },
-    {
-      id: 2,
-      title: 'Application Mobile',
-      description:
-        "Développement d'applications mobiles natives pour iOS et Android",
-      price: '4500',
-      studentName: 'Ahmed HASSAN',
-      category: 'mobile',
-      priceRange: '3000-6000',
-    },
-    {
-      id: 3,
-      title: 'Design Graphique',
-      description:
-        "Création d'identités visuelles et supports de communication",
-      price: '800',
-      studentName: 'Sophie MARTIN',
-      category: 'design',
-      priceRange: '500-1500',
-    },
-    {
-      id: 4,
-      title: 'Maintenance Système',
-      description: 'Installation et maintenance de systèmes informatiques',
-      price: '1200',
-      studentName: 'Lucas BERNARD',
-      category: 'maintenance',
-      priceRange: '1000-2500',
-    },
-    {
-      id: 5,
-      title: 'Formation Informatique',
-      description: 'Cours particuliers en programmation et informatique',
-      price: '300',
-      studentName: 'Marie DUBOIS',
-      category: 'formation',
-      priceRange: '200-500',
-    },
-    {
-      id: 6,
-      title: 'Consultation SEO',
-      description:
-        'Optimisation de votre site web pour les moteurs de recherche',
-      price: '1500',
-      studentName: 'Emma LEROY',
-      category: 'marketing',
-      priceRange: '1000-2500',
-    },
-  ]
-
-  // Filter states
+  const [services, setServices] = useState<Service[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [sortBy, setSortBy] = useState<string>('name')
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        // Get services
+        const servicesResponse = await axios.get(
+          'http://localhost:8000/api/services',
+        )
+        const servicesData = servicesResponse.data.data
+        setServices(servicesData)
+
+        // Get categories
+        const categoriesResponse = await axios.get(
+          'http://localhost:8000/api/categories',
+        )
+        setCategories(categoriesResponse.data.data)
+
+        setLoading(false)
+      } catch (err) {
+        setError('Erreur lors du chargement des données.')
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   // Filter and sort services
-  const filteredAndSortedServices = allServices
+  const filteredAndSortedServices = services
     .filter((service) => {
       const matchesCategory =
-        selectedCategory === 'all' || service.category === selectedCategory
+        selectedCategory === 'all' ||
+        service.category_id.toString() === selectedCategory
       const matchesPriceRange =
         selectedPriceRange === 'all' ||
-        service.priceRange === selectedPriceRange
+        service.price_range === selectedPriceRange
       const matchesSearch =
         service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.studentName.toLowerCase().includes(searchTerm.toLowerCase())
+        service.description.toLowerCase().includes(searchTerm.toLowerCase())
 
       return matchesCategory && matchesPriceRange && matchesSearch
     })
@@ -98,12 +70,26 @@ function RouteComponent() {
           return parseInt(b.price) - parseInt(a.price)
         case 'name':
           return a.title.localeCompare(b.title)
-        case 'student':
-          return a.studentName.localeCompare(b.studentName)
         default:
           return 0
       }
     })
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-red-500">
+        {error}
+      </div>
+    )
+  }
 
   const clearFilters = () => {
     setSelectedCategory('all')
@@ -168,12 +154,11 @@ function RouteComponent() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">Toutes catégories</option>
-                <option value="web">Développement Web</option>
-                <option value="mobile">Applications Mobiles</option>
-                <option value="design">Design</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="formation">Formation</option>
-                <option value="marketing">Marketing</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id.toString()}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
             </div>
 

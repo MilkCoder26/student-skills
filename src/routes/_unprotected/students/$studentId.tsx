@@ -6,45 +6,11 @@ import { MdEmail, MdPhone } from 'react-icons/md'
 import { FaGraduationCap } from 'react-icons/fa'
 import { FiBookOpen } from 'react-icons/fi'
 import { BsBullseye } from 'react-icons/bs'
-import type { Student } from '@/components/StudentCard'
+import type { Service, Student } from '@/types'
 import ServiceCard from '@/components/ServiceCard'
-
-const mockStudents: Student[] = [
-  {
-    id: 1,
-    name: 'Jean Dupont',
-    classe: 'SDDI',
-    niveau: 3,
-    sexe: 'male',
-    competence: 'Développement web',
-    skills: ['React', 'Node.js', 'UI/UX'],
-    email: 'jean.dupont@school.fr',
-    phone: '+33 6 12 34 56 78',
-    bio: 'Étudiant passionné par le développement et le design d’interfaces intuitives.',
-    services: [
-      {
-        id: 1,
-        title: 'Cours de Mathématiques',
-        studentName: 'Jean Dupont',
-        description:
-          'Soutien scolaire en mathématiques pour tous niveaux. Algèbre, géométrie, analyse et statistiques.',
-        price: '25',
-        category: 'Soutien scolaire',
-        priceRange: '20-30',
-      },
-      {
-        id: 2,
-        title: 'Aide aux devoirs',
-        studentName: 'Jean Dupont',
-        description:
-          "Accompagnement personnalisé pour l'organisation du travail et la réalisation des devoirs.",
-        price: '20',
-        category: 'Éducation',
-        priceRange: '15-25',
-      },
-    ],
-  },
-]
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export const Route = createFileRoute('/_unprotected/students/$studentId')({
   component: RouteComponent,
@@ -52,17 +18,49 @@ export const Route = createFileRoute('/_unprotected/students/$studentId')({
 
 function RouteComponent() {
   const { studentId } = Route.useParams()
-  const student = mockStudents.find((s) => s.id.toString() === studentId)
+  const [student, setStudent] = useState<Student | null>(null)
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  if (!student) {
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        const [studentResponse, servicesResponse] = await Promise.all([
+          axios.get(`http://localhost:8000/api/students/${studentId}`),
+          axios.get(`http://localhost:8000/api/services/${studentId}`),
+        ])
+
+        setStudent(studentResponse.data.data)
+        setServices(servicesResponse.data.data)
+        setLoading(false)
+      } catch (err) {
+        setError('Erreur lors du chargement des données.')
+        setLoading(false)
+      }
+    }
+
+    fetchStudentData()
+  }, [studentId])
+
+  if (loading) {
     return (
-      <div className="min-h-screen overflow-y-hidden flex justify-center items-center text-primary-500">
-        Étudiant introuvable.
+      <div>
+        <LoadingSpinner />
       </div>
     )
   }
 
-  const profileImage = student.sexe === 'male' ? MenImage : WomenImage
+  if (error || !student) {
+    return (
+      <div className="min-h-screen overflow-y-hidden flex justify-center items-center text-primary-500">
+        {error || 'Étudiant introuvable.'}
+      </div>
+    )
+  }
+
+  const profileImage =
+    student.sexe.toLocaleLowerCase() === 'masculin' ? MenImage : WomenImage
 
   return (
     <div className="min-h-screen bg-white py-16">
@@ -97,10 +95,10 @@ function RouteComponent() {
                     <span>{student.email}</span>
                   </div>
                 )}
-                {student.phone && (
+                {student.phone_number && (
                   <div className="flex items-center">
                     <MdPhone className="w-5 h-5 mr-2" />
-                    <span>{student.phone}</span>
+                    <span>{student.phone_number}</span>
                   </div>
                 )}
               </div>
@@ -148,14 +146,14 @@ function RouteComponent() {
           </div>
         </div>
 
-        {student.services?.length ? (
+        {services?.length ? (
           <div className="bg-white rounded-2xl p-6 border border-gray-100">
             <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
               <FaGraduationCap className="w-6 h-6 mr-2 text-primary-500" />
               Services Proposés
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {student.services.map((service) => (
+              {services.map((service) => (
                 <ServiceCard key={service.id} service={service} />
               ))}
             </div>

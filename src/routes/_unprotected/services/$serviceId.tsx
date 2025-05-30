@@ -10,42 +10,78 @@ import {
   MdSchool,
   MdVerified,
 } from 'react-icons/md'
-import type { Service } from '@/components/ServiceCard'
-import type { Student } from '@/components/StudentCard'
+import type { Service } from '@/types'
+import type { Student } from '@/types'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export const Route = createFileRoute('/_unprotected/services/$serviceId')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const service: Service = {
-    id: 1,
-    title: 'Cours de Mathématiques - Algèbre et Géométrie',
-    description:
-      'Je propose des cours particuliers en mathématiques pour les élèves du collège et lycée. Spécialisé en algèbre, géométrie et statistiques. Méthode pédagogique adaptée à chaque élève avec exercices pratiques et suivi personnalisé. Disponible pour aide aux devoirs et préparation aux examens.',
-    price: '120',
-    studentName: 'Ahmed Benali',
-    category: 'Éducation',
-    priceRange: '100-150',
+  const { serviceId } = Route.useParams()
+  const [service, setService] = useState<Service | null>(null)
+  const [student, setStudent] = useState<Student | null>(null)
+  const [categoryName, setCategoryName] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [otherServices, setOtherServices] = useState<Service[]>([])
+
+  useEffect(() => {
+    const fetchServiceAndStudent = async () => {
+      try {
+        // First fetch service
+        const serviceResponse = await axios.get(
+          `http://localhost:8000/api/services/${serviceId}`,
+        )
+        const serviceData = serviceResponse.data.data
+
+        setService(serviceData)
+
+        // Then fetch student using student_id from service
+        const studentResponse = await axios.get(
+          `http://localhost:8000/api/students/${serviceData.student_id}`,
+        )
+        const studentData = studentResponse.data.data
+
+        setStudent(studentData)
+
+        const categoryResponse = await axios.get(
+          `http://localhost:8000/api/categories/${serviceData.category_id}`,
+        )
+        setCategoryName(categoryResponse.data.data.name)
+
+        const otherServicesResponse = await axios.get(
+          `http://localhost:8000/api/services?student_id=${serviceData.student_id}&exclude=${serviceId}`,
+        )
+        setOtherServices(otherServicesResponse.data.data)
+
+        setLoading(false)
+      } catch (err) {
+        setError('Erreur lors du chargement des données.')
+        setLoading(false)
+      }
+    }
+
+    fetchServiceAndStudent()
+  }, [serviceId])
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    )
   }
 
-  const student: Student = {
-    id: 1,
-    name: 'Ahmed Benali',
-    classe: '3ème année Licence Mathématiques',
-    niveau: 3,
-    competence: 'Mathématiques, Physique',
-    sexe: 'Masculin',
-    skills: [
-      'Algèbre',
-      'Géométrie',
-      'Statistiques',
-      'Physique',
-      'Programmation Python',
-    ],
-    email: 'ahmed.benali@universite.ma',
-    phone: '+212 6 12 34 56 78',
-    bio: "Étudiant passionné en mathématiques avec 3 ans d'expérience dans l'enseignement particulier. J'ai aidé plus de 50 élèves à améliorer leurs notes et leur compréhension des mathématiques. Ma méthode se base sur la pratique intensive et l'adaptation au rythme de chaque élève.",
+  if (error || !service || !student) {
+    return (
+      <div className="min-h-screen flex justify-center items-center text-red-500">
+        {error || 'Service ou étudiant introuvable.'}
+      </div>
+    )
   }
 
   return (
@@ -80,9 +116,9 @@ function RouteComponent() {
                     </h1>
                     <div className="flex items-center text-sm text-gray-500">
                       <span className="bg-primary-100 text-primary-800 px-3 py-1 rounded-full mr-3">
-                        {service.category}
+                        {categoryName || 'Catégorie inconnue'}
                       </span>
-                      <span>{service.priceRange} DH</span>
+                      <span>{service.price_range} DH</span>
                     </div>
                   </div>
                 </div>
@@ -167,7 +203,7 @@ function RouteComponent() {
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MdPhone className="mr-3 text-primary-500" />
-                    <span className="text-sm">{student.phone}</span>
+                    <span className="text-sm">{student.phone_number}</span>
                   </div>
                   <div className="flex items-center text-gray-600">
                     <MdSchool className="mr-3 text-primary-500" />
@@ -223,27 +259,27 @@ function RouteComponent() {
               Autres services de {student.name}
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((item) => (
+              {otherServices.map((otherService) => (
                 <div
-                  key={item}
+                  key={otherService.id}
                   className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200"
                 >
                   <div className="flex items-center mb-3">
                     <MdOutlineMiscellaneousServices className="text-primary-500 mr-2" />
                     <h3 className="font-medium text-gray-900">
-                      Service {item}
+                      {otherService.title}
                     </h3>
                   </div>
                   <p className="text-gray-600 text-sm mb-3">
-                    Description courte du service {item}...
+                    {otherService.description.substring(0, 100)}...
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-primary-600">
-                      {100 + item * 20} DH
+                      {otherService.price} DH
                     </span>
                     <Link
                       to="/services/$serviceId"
-                      params={{ serviceId: item.toString() }}
+                      params={{ serviceId: otherService.id.toString() }}
                       className="text-primary-600 hover:text-primary-700 text-sm font-medium"
                     >
                       Voir →

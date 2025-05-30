@@ -1,40 +1,45 @@
 import { Link } from '@tanstack/react-router'
-import type { Service } from './ServiceCard'
+import type { Service } from '../types'
 import ServiceCard from './ServiceCard'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import LoadingSpinner from './LoadingSpinner'
 
 export default function ServiceSection() {
-  const services: Service[] = [
-    {
-      id: 1,
-      title: 'Développement Web',
-      description:
-        'Création de sites web modernes et responsives avec les dernières technologies',
-      price: '499',
-      studentName: 'Tenena SEKONGO',
-      category: 'web',
-      priceRange: '2000-5000',
-    },
-    {
-      id: 2,
-      title: 'Application Mobile',
-      description:
-        "Développement d'applications mobiles natives pour iOS et Android",
-      price: '899',
-      studentName: 'Marie DUBOIS',
-      category: 'web',
-      priceRange: '2000-5000',
-    },
-    {
-      id: 3,
-      title: 'Design Graphique',
-      description:
-        "Création d'identités visuelles et supports de communication",
-      price: '299',
-      studentName: 'Ahmed HASSAN',
-      category: 'web',
-      priceRange: '2000-5000',
-    },
-  ]
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/services')
+        setServices(response.data.data)
+        setLoading(false)
+      } catch (err) {
+        setError('Erreur lors du chargement des services.')
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  if (loading) {
+    return (
+      <div>
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center text-red-500">
+        {error}
+      </div>
+    )
+  }
 
   return (
     <section className="py-16 bg-[url('src/assets/bubbles.svg')]">

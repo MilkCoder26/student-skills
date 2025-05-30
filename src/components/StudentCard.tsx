@@ -1,21 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import MenImage from '../assets/men-profile.png'
 import WomenImage from '../assets/women-profile.png'
-import type { Service } from './ServiceCard'
-
-export type Student = {
-  id: number
-  name: string
-  classe: string
-  niveau: number
-  competence: string
-  sexe: string
-  skills: string[]
-  email?: string
-  phone?: string
-  services?: Service[]
-  bio?: string
-}
+import type { Student } from '../types'
 
 const StudentCard = ({ student }: { student: Student }) => {
   return (
@@ -24,7 +10,11 @@ const StudentCard = ({ student }: { student: Student }) => {
       <div className="flex justify-center mb-3">
         <div className="relative w-20 h-20 rounded-full overflow-hidden">
           <img
-            src={student.sexe === 'male' ? MenImage : WomenImage}
+            src={
+              student.sexe.toLocaleLowerCase() === 'masculin'
+                ? MenImage
+                : WomenImage
+            }
             alt="Student Avatar"
             className="w-full h-full object-cover"
           />

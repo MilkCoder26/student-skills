@@ -1,38 +1,51 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MdClose, MdAdd } from 'react-icons/md'
-import type { Service } from '../routes/_protected/dashboard/services'
+import { FaSpinner } from 'react-icons/fa'
+import type { Service, Category } from '../types'
+import axios from 'axios'
 
-interface AddServiceModalProps {
+type AddServiceModalProps = {
   isOpen: boolean
   onClose: () => void
-  onSubmit: (service: Omit<Service, 'id' | 'isOwner'>) => void
+  setServices: React.Dispatch<React.SetStateAction<Service[]>>
 }
 
-const categories = [
-  'Éducation',
-  'Informatique',
-  'Langues',
-  'Design',
-  'Musique',
-  'Autre',
-]
 const priceRanges = ['0-50', '50-100', '100-200', '200-300', '300+']
 
 export default function AddServiceModal({
   isOpen,
   onClose,
-  onSubmit,
+  setServices,
 }: AddServiceModalProps) {
+  const [categories, setCategories] = useState<Category[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     price: '',
-    studentName: '',
-    category: '',
-    priceRange: '',
+    category_id: '',
+    price_range: '',
+    student_id: 1,
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/categories')
+        setCategories(response.data.data)
+      } catch (err) {
+        console.error('Error fetching categories:', err)
+        setSubmitError('Erreur lors du chargement des catégories')
+      }
+    }
+
+    if (isOpen) {
+      fetchCategories()
+    }
+  }, [isOpen])
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -41,11 +54,10 @@ export default function AddServiceModal({
   ) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }))
     }
+    setSubmitError(null)
   }
 
   const validateForm = () => {
@@ -55,13 +67,11 @@ export default function AddServiceModal({
     if (!formData.description.trim())
       newErrors.description = 'La description est requise'
     if (!formData.price.trim()) newErrors.price = 'Le prix est requis'
-    if (!formData.studentName.trim())
-      newErrors.studentName = 'Le nom est requis'
-    if (!formData.category) newErrors.category = 'La catégorie est requise'
-    if (!formData.priceRange)
-      newErrors.priceRange = 'La fourchette de prix est requise'
+    if (!formData.category_id)
+      newErrors.category_id = 'La catégorie est requise'
+    if (!formData.price_range)
+      newErrors.price_range = 'La fourchette de prix est requise'
 
-    // Validate price is a number
     if (formData.price && isNaN(Number(formData.price))) {
       newErrors.price = 'Le prix doit être un nombre valide'
     }
@@ -70,12 +80,42 @@ export default function AddServiceModal({
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError(null)
 
     if (validateForm()) {
-      onSubmit(formData)
-      handleClose()
+      setIsLoading(true)
+      try {
+        const serviceData: Omit<Service, 'id'> = {
+          title: formData.title,
+          description: formData.description,
+          price: formData.price,
+          price_range: formData.price_range,
+          category_id: parseInt(formData.category_id),
+          student_id: 1,
+        }
+
+        const response = await axios.post(
+          'http://localhost:8000/api/services',
+          serviceData,
+        )
+
+        const newService = response.data.data
+        setServices((prev) => [...prev, newService])
+        handleClose()
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          setSubmitError(
+            error.response?.data?.message ||
+              'Erreur lors de la création du service',
+          )
+        } else {
+          setSubmitError('Une erreur inattendue est survenue')
+        }
+      } finally {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -84,11 +124,12 @@ export default function AddServiceModal({
       title: '',
       description: '',
       price: '',
-      studentName: '',
-      category: '',
-      priceRange: '',
+      category_id: '',
+      price_range: '',
+      student_id: 1,
     })
     setErrors({})
+    setSubmitError(null)
     onClose()
   }
 
@@ -110,6 +151,12 @@ export default function AddServiceModal({
             <MdClose className="text-2xl" />
           </button>
         </div>
+
+        {submitError && (
+          <div className="mx-6 mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600">{submitError}</p>
+          </div>
+        )}
 
         <form
           onSubmit={handleSubmit}
@@ -191,74 +238,18 @@ export default function AddServiceModal({
 
               <div>
                 <label
-                  htmlFor="studentName"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Votre nom *
-                </label>
-                <input
-                  type="text"
-                  id="studentName"
-                  name="studentName"
-                  value={formData.studentName}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                    errors.studentName ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  placeholder="Ex: Ahmed Benali"
-                />
-                {errors.studentName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.studentName}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Category and Price Range Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="category"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Catégorie *
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                    errors.category ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                >
-                  <option value="">Sélectionner une catégorie</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                {errors.category && (
-                  <p className="text-red-500 text-sm mt-1">{errors.category}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="priceRange"
+                  htmlFor="price_range"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Fourchette de prix *
                 </label>
                 <select
-                  id="priceRange"
-                  name="priceRange"
-                  value={formData.priceRange}
+                  id="price_range"
+                  name="price_range"
+                  value={formData.price_range}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                    errors.priceRange ? 'border-red-500' : 'border-gray-300'
+                    errors.price_range ? 'border-red-500' : 'border-gray-300'
                   }`}
                 >
                   <option value="">Sélectionner une fourchette</option>
@@ -268,30 +259,67 @@ export default function AddServiceModal({
                     </option>
                   ))}
                 </select>
-                {errors.priceRange && (
+                {errors.price_range && (
                   <p className="text-red-500 text-sm mt-1">
-                    {errors.priceRange}
+                    {errors.price_range}
                   </p>
                 )}
               </div>
             </div>
+
+            <div>
+              <label
+                htmlFor="category_id"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Catégorie *
+              </label>
+              <select
+                id="category_id"
+                name="category_id"
+                value={formData.category_id}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
+                  errors.category_id ? 'border-red-500' : 'border-gray-300'
+                }`}
+              >
+                <option value="">Sélectionner une catégorie</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {errors.category_id && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.category_id}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Footer */}
           <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
             <button
               type="button"
               onClick={handleClose}
               className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+              disabled={isLoading}
             >
               Annuler
             </button>
             <button
               type="submit"
-              className="bg-primary-900 hover:bg-primary-800 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+              disabled={isLoading}
+              className="bg-primary-900 hover:bg-primary-800 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <MdAdd className="text-xl" />
-              Créer le service
+              {isLoading ? (
+                <FaSpinner className="animate-spin h-5 w-5" />
+              ) : (
+                <>
+                  <MdAdd className="text-xl" />
+                  Créer le service
+                </>
+              )}
             </button>
           </div>
         </form>

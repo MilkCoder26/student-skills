@@ -1,37 +1,29 @@
 import { Link } from '@tanstack/react-router'
-import type { Student } from './StudentCard'
+import type { Student } from '../types'
 import StudentCard from './StudentCard'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import LoadingSpinner from './LoadingSpinner'
 
 export default function StudentSection() {
-  const students: Student[] = [
-    {
-      id: 1,
-      name: 'Tenena SEKONGO',
-      classe: 'SDDI',
-      niveau: 4,
-      competence: 'Développement site web',
-      sexe: 'male',
-      skills: ['React', 'JavaScript', 'CSS'],
-    },
-    {
-      id: 2,
-      name: 'Marie DUBOIS',
-      classe: 'SRII',
-      niveau: 3,
-      competence: 'Cybersécurité et réseaux',
-      sexe: 'female',
-      skills: ['Sécurité', 'Réseaux', 'Linux'],
-    },
-    {
-      id: 3,
-      name: 'Ahmed HASSAN',
-      classe: 'SLAM',
-      niveau: 5,
-      competence: 'Applications mobiles',
-      sexe: 'male',
-      skills: ['Flutter', 'Dart', 'Firebase'],
-    },
-  ]
+  const [students, setStudents] = useState<Student[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchStudents()
+  }, [])
+
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/api/students')
+      setStudents(response.data.data)
+      setLoading(false)
+    } catch (err) {
+      setError('Erreur lors du chargement des étudiants.')
+      setLoading(false)
+    }
+  }
 
   return (
     <section className="py-16 bg-[url('src/assets/bubbles.svg')]">
@@ -43,12 +35,21 @@ export default function StudentSection() {
           </h2>
         </div>
 
-        {/* Students grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {students.map((student) => (
-            <StudentCard key={student.id} student={student} />
-          ))}
-        </div>
+        {loading ? (
+          <div>
+            <LoadingSpinner />
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-64">
+            <p className="text-red-500">{error}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {students.map((student) => (
+              <StudentCard key={student.id} student={student} />
+            ))}
+          </div>
+        )}
 
         <div className="pt-4 mt-12 animate-fade-in-up-delay-2 text-center">
           <Link
